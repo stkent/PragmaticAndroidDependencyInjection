@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Speedy Subs</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="submit">Submit</string>
+    <string name="expires_format_string">Expires %s</string>
+    <string name="order_placed_format_string">Order %d successfully placed!</string>
+    <string name="done">Done</string>
+</resources>
