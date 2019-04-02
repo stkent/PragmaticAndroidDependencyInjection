@@ -6,11 +6,14 @@ import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 
 import com.stkent.speedysubs.networking.Callback;
+import com.stkent.speedysubs.networking.ordering.IOrderingApi;
 import com.stkent.speedysubs.networking.ordering.OrderingApi;
 import com.stkent.speedysubs.networking.ordering.models.CreditCard;
 import com.stkent.speedysubs.networking.ordering.models.Customer;
 import com.stkent.speedysubs.networking.ordering.models.Order;
+import com.stkent.speedysubs.state.ISession;
 import com.stkent.speedysubs.state.Session;
+import com.stkent.speedysubs.time.ICalendar;
 
 import org.threeten.bp.LocalDate;
 
@@ -27,7 +30,23 @@ public final class CreditCardViewModel extends ViewModel {
     private final MutableLiveData<Integer> _orderConfirmationNumber = new MutableLiveData<>();
     private final MutableLiveData<String> _errors = new MutableLiveData<>();
 
-    public CreditCardViewModel() {
+    @NonNull
+    private final IOrderingApi orderingApi;
+
+    @NonNull
+    private final ISession session;
+
+    @NonNull
+    private final ICalendar calendar;
+
+    CreditCardViewModel(
+            @NonNull final IOrderingApi orderingApi,
+            @NonNull final ISession session,
+            @NonNull final ICalendar calendar) {
+
+        this.orderingApi = orderingApi;
+        this.session = session;
+        this.calendar = calendar;
         _title.setValue("Choose Credit Card");
         _showProgressViews.setValue(false);
         displayCreditCards();
@@ -66,18 +85,18 @@ public final class CreditCardViewModel extends ViewModel {
     void onCreditCardSelected(@NonNull final CreditCard creditCard) {
         _showProgressViews.setValue(true);
 
-        final Customer customer = Session.getSharedInstance().getCustomer();
+        final Customer customer = session.getCustomer();
 
-        final Order existingOrder = Session.getSharedInstance().getOrder();
+        final Order existingOrder = session.getOrder();
         existingOrder.setCreditCard(creditCard);
 
-        new OrderingApi().placeOrder(
+        orderingApi.placeOrder(
                 customer,
                 existingOrder,
                 new Callback<Integer>() {
                     @Override
                     public void onSuccess(@NonNull final Integer orderId) {
-                        Session.getSharedInstance().clearOrder();
+                        session.clearOrder();
 
                         _showProgressViews.setValue(false);
 
@@ -94,13 +113,13 @@ public final class CreditCardViewModel extends ViewModel {
     }
 
     void onCreditCardsRefreshed() {
-        new OrderingApi().getCustomerCreditCards(
+        orderingApi.getCustomerCreditCards(
                 new Callback<List<CreditCard>>() {
                     @Override
                     public void onSuccess(@NonNull final List<CreditCard> creditCards) {
                         _endRefresh.setValue(new Object());
 
-                        Session.getSharedInstance().getCustomer().setCreditCards(creditCards);
+                        session.getCustomer().setCreditCards(creditCards);
                         displayCreditCards();
                     }
 
@@ -115,12 +134,12 @@ public final class CreditCardViewModel extends ViewModel {
 
     private void displayCreditCards() {
         final List<CreditCard> allCreditCards =
-                Session.getSharedInstance().getCustomer().getCreditCards();
+                session.getCustomer().getCreditCards();
 
         final List<CreditCard> nonExpiredCreditCards = new ArrayList<>();
 
         for (final CreditCard creditCard : allCreditCards) {
-            if (creditCard.getExpirationDate().isAfter(LocalDate.now())) {
+            if (creditCard.getExpirationDate().isAfter(calendar.today())) {
                 nonExpiredCreditCards.add(creditCard);
             }
         }

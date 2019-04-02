@@ -19,8 +19,9 @@ import java.util.UUID;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-public final class OrderingApi {
+public final class OrderingApi implements IOrderingApi {
 
+    @Override
     public void logIn(
             @NonNull final String username,
             @NonNull final String password,
@@ -40,6 +41,7 @@ public final class OrderingApi {
         }, SECONDS.toMillis(2));
     }
 
+    @Override
     public void getCustomerCreditCards(@NonNull final Callback<List<CreditCard>> callback) {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
@@ -56,6 +58,7 @@ public final class OrderingApi {
         }, SECONDS.toMillis(2));
     }
 
+    @Override
     public void getSandwiches(@NonNull final Callback<List<Sandwich>> callback) {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
@@ -73,6 +76,7 @@ public final class OrderingApi {
         }, SECONDS.toMillis(2));
     }
 
+    @Override
     public void placeOrder(
             @NonNull final Customer customer,
             @NonNull final Order order,

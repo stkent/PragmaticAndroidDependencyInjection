@@ -40,7 +40,7 @@ public final class CreditCardFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         viewModel = ViewModelProviders
-                .of(this)
+                .of(this, new CreditCardViewModelFactory())
                 .get(CreditCardViewModel.class);
     }
 

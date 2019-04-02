@@ -23,10 +23,18 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static android.widget.Toast.LENGTH_SHORT;
 
-public final class LoginFragment extends Fragment {
+public final class LoginFragment extends Fragment implements ILoginView {
 
     private ProgressBar progressIndicator;
     private EditText usernameField, passwordField;
+
+    private LoginPresenter presenter;
+
+    @Override
+    public void onCreate(@Nullable final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        presenter = new LoginPresenter(this, new OrderingApi(), Session.getSharedInstance());
+    }
 
     @Nullable
     @Override
@@ -55,48 +63,30 @@ public final class LoginFragment extends Fragment {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                final String username = usernameField.getText().toString().trim();
-
-                if (username.isEmpty()) {
-                    Toast.makeText(getContext(), "Username cannot be blank", LENGTH_SHORT).show();
-                    return;
-                }
-
-                final String password = passwordField.getText().toString().trim();
-
-                if (password.isEmpty()) {
-                    Toast.makeText(getContext(), "Password cannot be blank", LENGTH_SHORT).show();
-                    return;
-                }
-
-                progressIndicator.setVisibility(VISIBLE);
-
-                new OrderingApi().logIn(
-                        username,
-                        password,
-                        new Callback<Customer>() {
-                            @Override
-                            public void onSuccess(@NonNull final Customer customer) {
-                                Session.getSharedInstance().setCustomer(customer);
-
-                                progressIndicator.setVisibility(GONE);
-                                getFragmentManager()
-                                        .beginTransaction()
-                                        .replace(R.id.fragment_container, new SandwichFragment())
-                                        .addToBackStack(null)
-                                        .commitAllowingStateLoss();
-                            }
-
-                            @Override
-                            public void onError(@NonNull final String errorMessage) {
-                                Session.getSharedInstance().clearCustomer();
-
-                                progressIndicator.setVisibility(GONE);
-                                Toast.makeText(getContext(), errorMessage, LENGTH_SHORT).show();
-                            }
-                        });
+                presenter.onSubmitTapped(
+                        usernameField.getText().toString(),
+                        passwordField.getText().toString());
             }
         });
+    }
+
+    @Override
+    public void showProgressIndicators(final boolean show) {
+        progressIndicator.setVisibility(show ? VISIBLE : GONE);
+    }
+
+    @Override
+    public void goToChooseSandwichScreen() {
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, new SandwichFragment())
+                .addToBackStack(null)
+                .commitAllowingStateLoss();
+    }
+
+    @Override
+    public void displayError(@NonNull final String message) {
+        Toast.makeText(getContext(), message, LENGTH_SHORT).show();
     }
 
 }

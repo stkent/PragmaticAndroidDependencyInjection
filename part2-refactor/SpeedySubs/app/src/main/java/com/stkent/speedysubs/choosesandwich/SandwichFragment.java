@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import com.stkent.speedysubs.R;
 import com.stkent.speedysubs.choosecard.CreditCardFragment;
+import com.stkent.speedysubs.networking.ordering.OrderingApi;
+import com.stkent.speedysubs.persistence.SharedPrefsFaveStorage;
+import com.stkent.speedysubs.state.Session;
 
 import java.util.List;
 
@@ -30,7 +33,11 @@ public final class SandwichFragment extends Fragment implements ISandwichView {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new SandwichPresenter(this, getContext());
+        presenter = new SandwichPresenter(
+                this,
+                new OrderingApi(),
+                Session.getSharedInstance(),
+                new SharedPrefsFaveStorage(getContext()));
     }
 
     @Nullable

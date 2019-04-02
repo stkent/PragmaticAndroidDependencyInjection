@@ -6,9 +6,12 @@ import android.support.annotation.NonNull;
 
 import com.stkent.speedysubs.choosesandwich.ISandwichView.DisplaySandwich;
 import com.stkent.speedysubs.networking.Callback;
+import com.stkent.speedysubs.networking.ordering.IOrderingApi;
 import com.stkent.speedysubs.networking.ordering.OrderingApi;
 import com.stkent.speedysubs.networking.ordering.models.Order;
 import com.stkent.speedysubs.networking.ordering.models.Sandwich;
+import com.stkent.speedysubs.persistence.IFaveStorage;
+import com.stkent.speedysubs.state.ISession;
 import com.stkent.speedysubs.state.Session;
 
 import java.util.ArrayList;
@@ -18,18 +21,28 @@ import static android.content.Context.MODE_PRIVATE;
 
 final class SandwichPresenter {
 
-    private static final String PREFS_NAME = "FAVE_STORAGE";
-    private static final String FAVE_ID_KEY = "FAVE_ID";
-
     @NonNull
     private final ISandwichView view;
 
     @NonNull
-    private final SharedPreferences sharedPreferences;
+    private final IOrderingApi orderingApi;
 
-    SandwichPresenter(@NonNull final ISandwichView view, @NonNull final Context context) {
+    @NonNull
+    private final ISession session;
+
+    @NonNull
+    private final IFaveStorage faveStorage;
+
+    SandwichPresenter(
+            @NonNull final ISandwichView view,
+            @NonNull final IOrderingApi orderingApi,
+            @NonNull final ISession session,
+            @NonNull final IFaveStorage faveStorage) {
+
         this.view = view;
-        this.sharedPreferences = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        this.orderingApi = orderingApi;
+        this.session = session;
+        this.faveStorage = faveStorage;
     }
 
     void onViewCreated() {
@@ -39,7 +52,7 @@ final class SandwichPresenter {
     void onStart() {
         view.showProgressViews();
 
-        new OrderingApi().getSandwiches(new Callback<List<Sandwich>>() {
+        orderingApi.getSandwiches(new Callback<List<Sandwich>>() {
             @Override
             public void onSuccess(@NonNull final List<Sandwich> sandwiches) {
                 view.hideProgressViews();
@@ -57,21 +70,18 @@ final class SandwichPresenter {
     }
 
     void onSandwichSelected(@NonNull final Sandwich sandwich) {
-        sharedPreferences
-                .edit()
-                .putInt(FAVE_ID_KEY, sandwich.getId())
-                .apply();
+        faveStorage.setFavoriteSandwichId(sandwich.getId());
 
         final Order newOrder = new Order();
         newOrder.setSandwich(sandwich);
-        Session.getSharedInstance().setOrder(newOrder);
+        session.setOrder(newOrder);
 
         view.goToChooseCreditCardScreen();
     }
 
     @NonNull
     private List<DisplaySandwich> processSandwiches(@NonNull final List<Sandwich> sandwiches) {
-        final int favoriteId = sharedPreferences.getInt(FAVE_ID_KEY, -1);
+        final int favoriteId = faveStorage.getFavoriteSandwichId();
 
         final List<DisplaySandwich> result = new ArrayList<>();
 

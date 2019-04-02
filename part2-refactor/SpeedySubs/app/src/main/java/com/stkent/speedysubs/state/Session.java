@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import com.stkent.speedysubs.networking.ordering.models.Customer;
 import com.stkent.speedysubs.networking.ordering.models.Order;
 
-public final class Session {
+public final class Session implements ISession {
 
     @Nullable
     private static Session sharedInstance;
@@ -34,28 +34,34 @@ public final class Session {
         // This constructor intentionally left blank.
     }
 
+    @Override
     @Nullable
     public Customer getCustomer() {
         return customer;
     }
 
+    @Override
     @Nullable
     public Order getOrder() {
         return order;
     }
 
+    @Override
     public void setCustomer(@NonNull final Customer customer) {
         this.customer = customer;
     }
 
+    @Override
     public void clearCustomer() {
         customer = null;
     }
 
+    @Override
     public void setOrder(@NonNull final Order order) {
         this.order = order;
     }
 
+    @Override
     public void clearOrder() {
         order = null;
     }
