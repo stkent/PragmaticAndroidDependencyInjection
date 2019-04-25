@@ -189,7 +189,7 @@ We have now moved all business logic from the fragment into the presenter and in
 
 **Manually inject dependencies into presenter**
 
-- In the `LoginPresenter` class: add new field of types `ISession` and `IOrderingApi` and initialize them in the constructor:
+- In the `LoginPresenter` class: add new fields of types `ISession` and `IOrderingApi` and initialize them in the constructor:
     ```java
     @NonNull
     private final ILoginView view;
@@ -234,6 +234,10 @@ The structure of each test is roughly as follows:
 - Check that mock implementation methods were called the expected number of times with the expected arguments.
 
 Since this is a class on DI, rather than unit testing, I won't say any more about the test details. But notice how detailed and granular we are able to make these tests, and how clearly each scenario is defined and exercised. **That's** why we DI.
+
+**Check your work**
+
+Run the app. You should see no behavioral changes!
 
 # `SandwichFragment`
 
@@ -302,7 +306,7 @@ Since this is a class on DI, rather than unit testing, I won't say any more abou
 
 **Manually inject dependencies into presenter**
 
-- In the `SandwichPresenter` class: add new fields of types `IOrderingApi` and `ISession`, and initialize them in the constructor:
+- In the `SandwichPresenter` class: add new fields of types `IOrderingApi`, `ISession`, and `IFaveStorage`, and initialize them in the constructor:
     ```java
     @NonNull
     private final ISandwichView view;
@@ -356,6 +360,10 @@ Since this is a class on DI, rather than unit testing, I won't say any more abou
 **Inspect pre-written test suite**
 
 Look through the tests in `SandwichPresenterTest` to see how various scenarios are constructed and outcomes verified using mock implementations.
+
+**Check your work**
+
+Run the app. You should see no behavioral changes!
 
 # `CreditCardFragment`
 
@@ -450,6 +458,8 @@ Look through the tests in `SandwichPresenterTest` to see how various scenarios a
     }
     ```
 
+    A custom factory like this is required whenever our Android ViewModel constructor takes arguments.
+
 - In the `CreditCardFragment` class: update the view model initialization code to use our new factory:
     ```java
     viewModel = ViewModelProviders
@@ -461,10 +471,11 @@ Look through the tests in `SandwichPresenterTest` to see how various scenarios a
 
 Look through the tests in `CreditCardViewModelTest` to see how various scenarios are constructed and outcomes verified using mock implementations.
 
-# Check your work
+**Check your work**
 
-- Run the app. You should see no behavioral changes!
-- Run all the tests. Everything should pass (and be super-fast)!
+Run the app. You should see no behavioral changes!
+
+Run all the tests. Everything should pass (and be super-fast)!
 
 ![](images/test-report.png)
 

@@ -17,7 +17,8 @@ import org.threeten.bp.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-final class CreditCardViewModel extends ViewModel {
+@SuppressWarnings("WeakerAccess") // Public access needed to avoid runtime instantiation crash.
+public final class CreditCardViewModel extends ViewModel {
 
     private final MutableLiveData<String> _title = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _showProgressViews = new MutableLiveData<>();
@@ -26,7 +27,7 @@ final class CreditCardViewModel extends ViewModel {
     private final MutableLiveData<Integer> _orderConfirmationNumber = new MutableLiveData<>();
     private final MutableLiveData<String> _errors = new MutableLiveData<>();
 
-    CreditCardViewModel() {
+    public CreditCardViewModel() {
         _title.setValue("Choose Credit Card");
         _showProgressViews.setValue(false);
         displayCreditCards();
