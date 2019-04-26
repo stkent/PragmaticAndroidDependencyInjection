@@ -102,7 +102,7 @@ This screen is architected using MVC (all logic lives in the fragment). Per the 
     - Replace all occurrences of `progressIndicator.setVisibility(GONE);` with `view.showProgressIndicators(false);`.
     - Replace the block
         ```java
-        fragment.getFragmentManager()
+        getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, new SandwichFragment())
                 .addToBackStack(null)

@@ -591,7 +591,7 @@ We will refactor each screen to allow unit testing via DI.
 * _Screen implements pull-to-refresh_
 * **Only non-expired credit cards are listed**
 * _Order is submitted on row tap_
-* Choose Sandwich screen is launched on success
+* Confirmation screen is launched on success
 
 ---
 
