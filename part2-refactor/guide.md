@@ -130,9 +130,7 @@ We have now moved all business logic from the fragment into the presenter and in
     - `OrderingApi` (via a call to `new OrderingApi()`).
     - `Session` (via calls to `Session.getSharedInstance()`).
 
-    We can identify the behaviors of these dependencies through a combination of (1) inspecting their public methods, and (2) analyzing how they are used by consumers. In some cases (like these), it will make sense to mimic the already-public API of an existing class in our new behavioral interface. In other cases (we'll see an example later) it is better to create a brand-new interface, divorced from the public API of the concrete implementation we were previously using. The latter is usually preferred when behaviors do not map 1-1 to concrete implementation details (e.g. if a single domain action requires that multiple dependency methods be combined) or when concrete implementation naming conventions do not mesh well with domain naming conventions.
-
-**Create interfaces describing dependency behaviors**
+**Create interfaces describing idealized dependency behaviors**
 
 - In the `networking/ordering` package: create an interface named `IOrderingApi`:
     ```java
@@ -159,7 +157,7 @@ We have now moved all business logic from the fragment into the presenter and in
     }
     ```
 
-    You may wonder why we have included all public `OrderingApi` methods in this interface, rather than just the method called by `LoginPresenter` (`OrderingApi::logIn`). This decision is a result of prioritizing [cohesion](https://en.wikipedia.org/wiki/Cohesion_(computer_science)) (keeping related behaviors grouped together) over maximum granularity (defining many interfaces, each requiring exactly the behaviors each consumer needs, no more, no less). We will see the benefit of the tradeoff we have made when refactoring the next two screens, where we will be able to reuse the `IOrderingApi` interface as-is.
+    In this case we have chosen to prioritize cohesion over interface segregation by including all existing public methods of `OrderingApi` in our `IOrderingApi` interface. We will see the benefit of this choice when refactoring the next two screens, where we will be able to reuse the `IOrderingApi` interface as-is rather than polluting our app with many similar API-related interfaces. Our method names are already domain-appropriate since `OrderingApi` is an implementation we created.
 
 - In the `OrderingApi` class: implement the `IOrderingApi` interface. (Don't forget to add `@Override` annotations where appropriate.)
 
@@ -183,7 +181,7 @@ We have now moved all business logic from the fragment into the presenter and in
     }
     ```
 
-    Again, we include all public `Session` methods in this interface to maintain high cohesion.
+    Again, we include all public `Session` methods in this interface to maintain high cohesion. Our method names are already domain-appropriate since `Session` is an implementation we created.
 
 - In the `Session` class: implement the `ISession` interface. (Don't forget to add `@Override` annotations where appropriate.)
 
@@ -254,7 +252,7 @@ Run the app. You should see no behavioral changes!
 
     `SandwichPresenter` uses `SharedPreferences` for two things: saving the id of the favorite sandwich, and retrieving the id of the saved favorite sandwich. The interface we define in the next step will include one appropriately-named method for each of these behaviors.
 
-**Create interfaces describing (new) dependency behaviors**
+**Create interfaces describing (new) idealized dependency behaviors**
 
 - Make a new `persistence` package inside the `com.stkent.speedysubs` package.
 
@@ -270,7 +268,7 @@ Run the app. You should see no behavioral changes!
     }
     ```
 
-    This interface (1) is much smaller than the public API of `SharedPreferences`, and (2) uses domain-specific naming (vs the domain-agnostic naming of `SharedPreferences`). Both are wins when it comes to understanding and testing our code.
+    This custom role interface (1) is much smaller than the large public API of `SharedPreferences`, and (2) uses domain-specific naming (vs the domain-agnostic naming of `SharedPreferences`). Both are wins when it comes to understanding and testing our code.
 
 - In the `persistence` package: create a class named `SharedPrefsFaveStorage` that implements `IFaveStorage` using a backing `SharedPreferences` instance:
     ```java
@@ -374,7 +372,7 @@ Run the app. You should see no behavioral changes!
     - `Session` (via calls to `Session.getSharedInstance()`).
     - `LocalDate` (via a call to `LocalDate.now()`).
 
-**Create interfaces describing (new) dependency behaviors**
+**Create interfaces describing (new) idealized dependency behaviors**
 
 - Make a new `time` package inside the `com.stkent.speedysubs` package.
 

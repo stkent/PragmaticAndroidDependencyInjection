@@ -214,7 +214,7 @@ TimeStamper timeStamper = new TimeStamper();
 System.out.println(timeStamper.getTimeStamp());
 ```
 
-^Users of the `TimeStamper` class have no way of easily determining which other app components it uses.
+^Users of the `TimeStamper` class have no way of easily determining which other app components it depends on, nor which parts of them it uses.
 
 ---
 
@@ -248,14 +248,14 @@ A consumer that hard-codes access to _singletons_ may have **brittle/slow/lying 
 
 # Improving on hard-coding
 
-* Make consumer dependency needs **explicit** (by receiving instances through constructors or setters).
+* Make consumer dependency needs **explicit** (by requesting instances from collaborators).
     _=> Also decouples consumer from dependency lifetime._
-* Express dependency needs using **interfaces (behaviors)** rather than classes (implementations).
-    _=> Allows mock implementations to be supplied in unit tests._
+* Express dependency needs using **role interfaces (behaviors)** rather than classes (implementations).
+    _=> Allows mock implementations to be used in unit tests._
 
 These are the elements of robust **dependency injection**!
 
-^We haven't discussed all the implementation details yet, e.g. who creates/injects dependencies to fulfill consumer needs, but the essential ideas are in place!
+^[Role interfaces](https://martinfowler.com/bliki/RoleInterface.html) are those that describe exactly the functionality required by a corresponding consumer (and nothing more) using domain-specific naming. This idea is also known as the [interface segregation principle](https://en.wikipedia.org/wiki/Interface_segregation_principle). Limiting exposed functionality in this way can be beneficial when our production dependency implementation has a large public API. However, if this minimization is taken too far, the [cohesion](https://en.wikipedia.org/wiki/Cohesion_(computer_science)) of our codebase will be decreased. Deciding whether to prioritize interface segregation or cohesion is a judgment call best made on a case-by-case basis.
 
 ---
 
