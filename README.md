@@ -16,7 +16,7 @@ Participants should leave feeling empowered to champion the introduction of manu
 
 All workshop resources are collected in this repository. Before beginning, you should have:
 
-- Android Studio 3.3 installed.
+- Android Studio 3.4.1 or newer installed.
 - A basic awareness of unit testing.
 - A basic awareness of common Android app architectures (MVC, MVP, MVVM).
 
