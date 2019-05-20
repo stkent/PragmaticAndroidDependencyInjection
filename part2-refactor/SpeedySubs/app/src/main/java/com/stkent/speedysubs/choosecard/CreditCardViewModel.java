@@ -81,14 +81,14 @@ public final class CreditCardViewModel extends ViewModel {
 
                         _showProgressViews.setValue(false);
 
-                        _orderConfirmationNumber.postValue(orderId);
+                        _orderConfirmationNumber.setValue(orderId);
                     }
 
                     @Override
                     public void onError(@NonNull final String errorMessage) {
                         _showProgressViews.setValue(false);
 
-                        _errors.postValue(errorMessage);
+                        _errors.setValue(errorMessage);
                     }
                 });
     }
@@ -98,7 +98,7 @@ public final class CreditCardViewModel extends ViewModel {
                 new Callback<List<CreditCard>>() {
                     @Override
                     public void onSuccess(@NonNull final List<CreditCard> creditCards) {
-                        _endRefresh.postValue(new Object());
+                        _endRefresh.setValue(new Object());
 
                         Session.getSharedInstance().getCustomer().setCreditCards(creditCards);
                         displayCreditCards();
@@ -106,9 +106,9 @@ public final class CreditCardViewModel extends ViewModel {
 
                     @Override
                     public void onError(@NonNull final String errorMessage) {
-                        _endRefresh.postValue(new Object());
+                        _endRefresh.setValue(new Object());
 
-                        _errors.postValue(errorMessage);
+                        _errors.setValue(errorMessage);
                     }
                 });
     }
